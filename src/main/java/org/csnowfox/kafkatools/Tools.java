@@ -1,5 +1,6 @@
 package org.csnowfox.kafkatools;
 
+import kafka.admin.ConsumerGroupCommand;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -9,7 +10,9 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.csnowfox.kafkatools.entity.GroupPartitionOffset;
 import org.csnowfox.kafkatools.entity.TopicPartitionOffset;
+import org.csnowfox.kafkatools.utils.DateUtils;
 
+import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -135,6 +138,32 @@ public class Tools {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Set offset according to time
+     * @param groupid
+     * @param topic
+     * @param datetime
+     * @throws ParseException
+     */
+    public void resetOffsetByDatetime(String groupid, String topic, String datetime) throws ParseException {
+        String[] arg = new String[10];
+        arg[0] = "--bootstrap-server";
+        arg[1] = brokerUrl;
+        arg[2] = "--group";
+        arg[3] = groupid;
+        arg[4] = "--topic";
+        arg[5] = topic;
+        arg[6] = "--reset-offsets";
+        arg[7] = "--to-datetime";
+        arg[8] = DateUtils.getISO8601Timestamp(DateUtils.getDateClass(datetime));
+        arg[9] = "--execute";
+
+        ConsumerGroupCommand.ConsumerGroupCommandOptions checkArgs = new ConsumerGroupCommand.ConsumerGroupCommandOptions(
+                arg);
+        checkArgs.checkArgs();
+        scala.collection.immutable.Map<TopicPartition, OffsetAndMetadata> resultMap = new ConsumerGroupCommand.ConsumerGroupService(checkArgs).resetOffsets();
     }
 
     private KafkaConsumer getNewConsumer(){

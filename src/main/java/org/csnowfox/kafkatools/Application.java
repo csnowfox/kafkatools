@@ -7,6 +7,7 @@ import com.beust.jcommander.validators.PositiveInteger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.text.ParseException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -42,21 +43,29 @@ public class Application {
     private String topicDelete;
 
 
-    @Parameter(names = "--group", description = "list consumer group information, for example --group=group1 [-topic=topicName]", help = true, order = 6)
+    @Parameter(names = "--group", description = "list consumer group information, for example --group=group1 [-topic=topicName [-reset-offset-datetime=yyyyMMddHHmmss]]", help = true, order = 6)
     private String group;
 
-    @Parameter(names = "-topic", description = "or command --group", help = true, order = 6, hidden = true)
+    @Parameter(names = "-topic", description = "for command --group", help = true, order = 6, hidden = true)
     private String topic;
 
+    @Parameter(names = "-reset-offset-datetime", description = "Set offset according to time(yyyyMMddHHmmss), for command --group", help = true, order = 6, hidden = true)
+    private String resetOffsetDatetime;
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException, ParseException {
         Application app = new Application();
         JCommander j = JCommander.newBuilder().addObject(app).build();
-        j.parse(args);
+        try {
+            j.parse(args);
+        } catch (Exception e) {
+            JCommander.getConsole().println("ERROR: " + e.getMessage());
+            return;
+        }
         app.run(j);
     }
 
-    public void run(JCommander j) throws ExecutionException, InterruptedException {
+    public void run(JCommander j) throws ExecutionException, InterruptedException, ParseException {
 
         if (help) {
             j.setProgramName("java -jar kafkatools.jar");
@@ -66,7 +75,6 @@ public class Application {
 
         if (broker == null || broker.trim().equals("")) {
             JCommander.getConsole().println("ERROR: Broker is a required parameter");
-            j.usage();
             return;
         }
 
@@ -94,6 +102,15 @@ public class Application {
         }
 
         if (group != null && !group.trim().equals("")) {
+
+            if (resetOffsetDatetime != null && !resetOffsetDatetime.trim().equals("")) {
+                if (topic == null || topic.trim().equals("")) {
+                    JCommander.getConsole().println("ERROR: reset offset must specify a topic");
+                    return;
+                }
+                tools.resetOffsetByDatetime(group, topic, resetOffsetDatetime);
+            }
+
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             JCommander.getConsole().println(gson.toJson(tools.consumerGroupListing(group, topic)));
             return;
