@@ -1,6 +1,7 @@
 # kafkatools
 
 Kafka's console tool to manage topics, query offsets, etc.
+You need jre1.8 or above.
 
  - Validated on kafka version 2.11
 
