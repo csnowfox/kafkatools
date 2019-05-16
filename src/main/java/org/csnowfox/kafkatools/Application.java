@@ -37,7 +37,7 @@ public class Application {
     private int partitions;
 
     @Parameter(names = "-replication", description ="for command --topic-create", order = 4, hidden = true, validateWith = PositiveInteger.class)
-    private short replication;
+    private int replication;
 
     @Parameter(names = "--topic-delete", description ="delete a topic, for example --topic-delete=topicName", help = true, order = 5)
     private String topicDelete;
@@ -92,7 +92,7 @@ public class Application {
         }
 
         if (topicCreate != null && !topicCreate.trim().equals("")) {
-            tools.createTopic(topicCreate, partitions, replication);
+            tools.createTopic(topicCreate, partitions, (short) replication);
             return;
         }
 

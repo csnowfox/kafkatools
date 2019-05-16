@@ -157,7 +157,7 @@ public class Tools {
         arg[5] = topic;
         arg[6] = "--reset-offsets";
         arg[7] = "--to-datetime";
-        arg[8] = DateUtils.getISO8601Timestamp(DateUtils.getDateClass(datetime));
+        arg[8] = DateUtils.getISO8601Timestamp(DateUtils.convertToGMT(DateUtils.getDateClass(datetime)));
         arg[9] = "--execute";
 
         ConsumerGroupCommand.ConsumerGroupCommandOptions checkArgs = new ConsumerGroupCommand.ConsumerGroupCommandOptions(
