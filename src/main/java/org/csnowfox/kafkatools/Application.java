@@ -46,6 +46,9 @@ public class Application {
     @Parameter(names = "--group", description = "list consumer group information, for example --group=group1 [-topic=topicName [-reset-offset-datetime=yyyyMMddHHmmss]]", help = true, order = 6)
     private String group;
 
+    @Parameter(names = "--group-list", description = "list consumer group information, for example --group-list", help = true, order = 6)
+    private boolean groupList;
+
     @Parameter(names = "-topic", description = "for command --group", help = true, order = 6, hidden = true)
     private String topic;
 
@@ -101,6 +104,12 @@ public class Application {
             return;
         }
 
+        if (groupList) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JCommander.getConsole().println(gson.toJson(tools.consumerGroupListing()));
+            return;
+        }
+
         if (group != null && !group.trim().equals("")) {
 
             if (resetOffsetDatetime != null && !resetOffsetDatetime.trim().equals("")) {
@@ -108,11 +117,23 @@ public class Application {
                     JCommander.getConsole().println("ERROR: reset offset must specify a topic");
                     return;
                 }
-                tools.resetOffsetByDatetime(group, topic, resetOffsetDatetime);
+                String[] t = topic.split(",");
+                for (String t0 : t) {
+                    tools.resetOffsetByDatetime(group, t0, resetOffsetDatetime);
+                }
             }
 
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            JCommander.getConsole().println(gson.toJson(tools.consumerGroupListing(group, topic)));
+
+            if (topic == null || topic.trim().equals("")) {
+                JCommander.getConsole().println("ERROR: --group must specify a topic");
+                return;
+            }
+            String[] t = topic.split(",");
+            for (String t0 : t) {
+                JCommander.getConsole().println(gson.toJson(tools.consumerGroupListing(group, t0)));
+            }
+
             return;
         }
 

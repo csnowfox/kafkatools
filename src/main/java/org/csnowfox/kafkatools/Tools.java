@@ -46,6 +46,26 @@ public class Tools {
     }
 
     /**
+     * Get the groupids
+     * @return
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public List<String> consumerGroupListing () throws ExecutionException, InterruptedException {
+        Properties pro = new Properties();
+        pro.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, brokerUrl);
+        org.apache.kafka.clients.admin.AdminClient adminClient = org.apache.kafka.clients.admin.AdminClient.create(pro);
+        ListConsumerGroupsOptions opts = new ListConsumerGroupsOptions();
+        ListConsumerGroupsResult listConsumerGroupsResult =  adminClient.listConsumerGroups();
+        Collection<ConsumerGroupListing> rs = listConsumerGroupsResult.all().get();
+        List<String> result = new LinkedList<>();
+        for (ConsumerGroupListing c : rs) {
+            result.add(c.groupId());
+        }
+        return result;
+    }
+
+    /**
      * Get the offset of the specified groupid
      * @return
      * @throws ExecutionException
