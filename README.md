@@ -20,6 +20,8 @@ Usage: java -jar kafkatools.jar [options]
       -replication=2 
     --topic-delete
       delete a topic, for example --topic-delete=topicName
+    --group-list
+      list consumer group information, for example --group-list
     --group
       list consumer group information, for example --group=group1 
       [-topic=topicName [-reset-offset-datetime=yyyyMMddHHmmss]] 
