@@ -14,7 +14,7 @@ Usage: java -jar kafkatools.jar [options]
     --topic-list
       list all topics
     --topic-list-offset
-      list all topics with offset
+      list topics with offset, for example --topic-list-offset=topic1
     --topic-create
       create a topic, for example --topic-create=topicName -partitions=3 -replication=2 
     --topic-delete
