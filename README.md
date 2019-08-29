@@ -28,11 +28,11 @@ Usage: java -jar kafkatools.jar [options]
 ```
 
 for example
- - query the topic
+ query the topic:
  java -jar kafkatools.jar --broker=192.168.81.183:21005 --topic-list
 
- - query the consumer groups
+ query the consumer groups:
  java -jar kafkatools.jar --broker=192.168.81.183:21005 --group-list
 
- - query the offset of the group
+ query the offset of the group:
  java -jar kafkatools.jar -broker=192.168.81.183:21005 --group=query_history -topic=query_history
